@@ -10,11 +10,11 @@ async function scrapeUdyamForm() {
       waitUntil: 'networkidle2'
     });
 
-    // Extract form fields for Step 1 & 2
+  
     const formData = await page.evaluate(() => {
       const fields = [];
       
-      // Get all input fields
+      
       const inputs = document.querySelectorAll('input, select, textarea');
       inputs.forEach(input => {
         if (input.type !== 'hidden') {
@@ -32,7 +32,7 @@ async function scrapeUdyamForm() {
         }
       });
 
-      // Get validation messages
+      
       const validationMessages = {};
       const validators = document.querySelectorAll('[data-validation], .validation-message');
       validators.forEach(v => {
@@ -65,7 +65,7 @@ async function scrapeUdyamForm() {
       };
     });
 
-    // Save scraped data
+    
     fs.writeFileSync('./scraped_form_data.json', JSON.stringify(formData, null, 2));
     console.log('Form data scraped successfully!');
     
@@ -76,7 +76,7 @@ async function scrapeUdyamForm() {
   }
 }
 
-// Fallback form schema if scraping fails
+
 const fallbackSchema = {
   steps: [
     {

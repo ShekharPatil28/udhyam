@@ -23,8 +23,7 @@ app.get('/api/test', (req, res) => {
 app.get('/api/form-schema', (req, res) => {
   console.log('Form schema endpoint hit');
   
-  // In your fallback schema, add PIN code field to step 2
-// In your fallback schema, add PIN code field to step 2
+ 
 const fallbackSchema = {
   steps: [
     {
@@ -118,7 +117,7 @@ const panValidation = body('pan')
   .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)
   .withMessage('Invalid PAN format');
 
-// Step 1 validation
+
 app.post('/api/validate-step1', 
   [aadhaarValidation, otpValidation],
   async (req, res) => {
@@ -147,7 +146,7 @@ app.post('/api/validate-step1',
   }
 );
 
-// Step 2 validation
+
 app.post('/api/validate-step2',
   [panValidation],
   async (req, res) => {
@@ -175,12 +174,12 @@ app.listen(PORT, () => {
   console.log(`📋 Schema: http://localhost:${PORT}/api/form-schema`);
 });
 
-// PIN code to city/state API
+
 app.get('/api/pincode/:pin', async (req, res) => {
   try {
     const pin = req.params.pin;
     
-    // Validate PIN format
+    
     if (!/^[0-9]{6}$/.test(pin)) {
       return res.status(400).json({
         success: false,
@@ -188,7 +187,7 @@ app.get('/api/pincode/:pin', async (req, res) => {
       });
     }
 
-    // Use PostPin API
+    
     const response = await fetch(`http://postalpincode.in/api/pincode/${pin}`);
     const data = await response.json();
     
