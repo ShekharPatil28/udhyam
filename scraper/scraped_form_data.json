@@ -1,0 +1,46 @@
+{
+  "steps": [
+    {
+      "step": 1,
+      "title": "Aadhaar Number & OTP Validation",
+      "fields": [
+        {
+          "id": "aadhaar",
+          "name": "aadhaar",
+          "type": "text",
+          "placeholder": "Enter 12-digit Aadhaar Number",
+          "required": true,
+          "maxLength": 12,
+          "pattern": "^[0-9]{12}$",
+          "label": "Aadhaar Number"
+        },
+        {
+          "id": "otp",
+          "name": "otp",
+          "type": "text",
+          "placeholder": "Enter OTP",
+          "required": true,
+          "maxLength": 6,
+          "pattern": "^[0-9]{6}$",
+          "label": "OTP"
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "title": "PAN Validation",
+      "fields": [
+        {
+          "id": "pan",
+          "name": "pan",
+          "type": "text",
+          "placeholder": "Enter PAN Number",
+          "required": true,
+          "maxLength": 10,
+          "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
+          "label": "PAN Number"
+        }
+      ]
+    }
+  ]
+}
