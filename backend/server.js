@@ -7,12 +7,15 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(helmet());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-frontend.vercel.app'] // Your Vercel URL
+    : ['http://localhost:3000'],
   credentials: true
-}));
+}));  
 app.use(express.json());
+
+
 
 // Test route
 app.get('/api/test', (req, res) => {
@@ -168,12 +171,9 @@ app.post('/api/validate-step2',
   }
 );
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`🔗 Test: http://localhost:${PORT}/api/test`);
-  console.log(`📋 Schema: http://localhost:${PORT}/api/form-schema`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
 
 app.get('/api/pincode/:pin', async (req, res) => {
   try {
