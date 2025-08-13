@@ -15,6 +15,71 @@ app.use(cors({
 }));  
 app.use(express.json());
 
+// Add these routes to your existing server.js file:
+
+// Form schema route
+app.get('/api/form-schema', (req, res) => {
+  res.json({
+    success: true,
+    schema: {
+      step1: {
+        fields: ['aadhaar', 'otp'],
+        validation: {
+          aadhaar: { required: true, length: 12 },
+          otp: { required: true, length: 6 }
+        }
+      },
+      step2: {
+        fields: ['pan', 'pincode'],
+        validation: {
+          pan: { required: true, pattern: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/ },
+          pincode: { required: true, length: 6 }
+        }
+      }
+    }
+  });
+});
+
+// Step 1 validation route
+app.post('/api/validate-step1', (req, res) => {
+  const { aadhaar, otp } = req.body;
+  
+  if (aadhaar === '123456789012' && otp === '123456') {
+    res.json({ success: true, message: 'Step 1 validated successfully' });
+  } else {
+    res.status(400).json({ success: false, message: 'Invalid Aadhaar or OTP' });
+  }
+});
+
+// Step 2 validation route
+app.post('/api/validate-step2', (req, res) => {
+  const { pan, pincode } = req.body;
+  
+  if (pan && pincode) {
+    res.json({ 
+      success: true, 
+      message: 'Step 2 validated successfully',
+      locationData: {
+        pincode: pincode,
+        city: 'New Delhi',
+        state: 'Delhi'
+      }
+    });
+  } else {
+    res.status(400).json({ success: false, message: 'Invalid PAN or PIN code' });
+  }
+});
+
+// Final form submission
+app.post('/api/submit-form', (req, res) => {
+  console.log('Form submission received:', req.body);
+  
+  res.json({ 
+    success: true, 
+    message: 'Udyam registration submitted successfully',
+    registrationId: 'UDYAM-' + Date.now()
+  });
+});
 
 
 // Test route
