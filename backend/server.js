@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend.vercel.app'] // Your Vercel URL
+    ? ['https://udyam-registration-portal.vercel.app/'] // Your Vercel URL
     : ['http://localhost:3000'],
   credentials: true
 }));  
