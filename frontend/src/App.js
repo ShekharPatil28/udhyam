@@ -203,10 +203,10 @@ function App() {
 
       <nav className="nav-bar">
         <ul className="nav-links">
-          <li><a href="#" className="active">Home</a></li>
-          <li><a href="#">NIC Code</a></li>
-          <li><a href="#">Print / Verify</a></li>
-          <li><a href="#">Login</a></li>
+          <li><a  className="active">Home</a></li>
+          <li><a >NIC Code</a></li>
+          <li><a >Print / Verify</a></li>
+          <li><a >Login</a></li>
         </ul>
       </nav>
 
