@@ -13,6 +13,12 @@ app.use(cors({
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send({
+    activeStatus: true,
+    error: false,
+  });
+
 // Validation rules
 const validations = {
   aadhaar: body('aadhaar').matches(/^[0-9]{12}$/).withMessage('Aadhaar must be 12 digits'),
