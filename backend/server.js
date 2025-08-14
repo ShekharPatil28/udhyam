@@ -5,21 +5,15 @@ const { body, validationResult } = require('express-validator');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS Configuration
-const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://udyam-registration-portal.vercel.app']
-    : ['http://localhost:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
+// Simple CORS for local development
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json());
-app.options('*', cors(corsOptions));
 
-// Validation rules (defined once, reused)
+// Validation rules
 const validations = {
   aadhaar: body('aadhaar').matches(/^[0-9]{12}$/).withMessage('Aadhaar must be 12 digits'),
   otp: body('otp').matches(/^[0-9]{6}$/).withMessage('OTP must be 6 digits'),
@@ -30,8 +24,7 @@ const validations = {
 app.get('/api/test', (req, res) => {
   res.json({ 
     message: 'Backend server is working!', 
-    timestamp: new Date(),
-    environment: process.env.NODE_ENV || 'development'
+    timestamp: new Date()
   });
 });
 
@@ -171,6 +164,8 @@ app.get('/api/pincode/:pin', async (req, res) => {
 
 // Final form submission
 app.post('/api/submit-form', (req, res) => {
+  console.log('Form submission received:', req.body);
+  
   res.json({ 
     success: true, 
     message: 'Udyam registration submitted successfully',
@@ -180,9 +175,8 @@ app.post('/api/submit-form', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = app;

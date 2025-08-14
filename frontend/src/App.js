@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Simple local API URL
+const API_BASE_URL = 'http://localhost:5000/api';
 
 const formSchema = {
   steps: [
@@ -37,7 +38,12 @@ function App() {
   const validateField = (field, value) => {
     if (field.required && !value) return `${field.label} is required`;
     if (field.pattern && value && !new RegExp(field.pattern).test(value)) {
-      const messages = { aadhaar: 'Enter valid 12-digit Aadhaar', pan: 'Enter valid PAN (ABCDE1234F)', otp: 'Enter valid 6-digit OTP', pincode: 'Enter valid 6-digit PIN' };
+      const messages = { 
+        aadhaar: 'Enter valid 12-digit Aadhaar', 
+        pan: 'Enter valid PAN (ABCDE1234F)', 
+        otp: 'Enter valid 6-digit OTP', 
+        pincode: 'Enter valid 6-digit PIN' 
+      };
       return messages[field.name] || 'Invalid format';
     }
     return null;
@@ -50,11 +56,18 @@ function App() {
       try {
         const response = await axios.get(`${API_BASE_URL}/pincode/${value}`);
         if (response.data.success) {
-          setFormData(prev => ({ ...prev, city: response.data.data.city, state: response.data.data.state }));
+          setFormData(prev => ({ 
+            ...prev, 
+            city: response.data.data.city, 
+            state: response.data.data.state 
+          }));
           setErrors(prev => ({ ...prev, pincode: null, city: null, state: null }));
         }
       } catch (error) {
-        setErrors(prev => ({ ...prev, pincode: 'Invalid PIN code or unable to fetch location data' }));
+        setErrors(prev => ({ 
+          ...prev, 
+          pincode: 'Invalid PIN code or unable to fetch location data' 
+        }));
       } finally {
         setPincodeLoading(false);
       }
@@ -62,8 +75,16 @@ function App() {
   };
 
   const handleInputChange = (field, value) => {
-    if (field.name === 'pincode') { handlePincodeChange(value); return; }
-    setFormData(prev => ({ ...prev, [field.name]: field.name === 'pan' ? value.toUpperCase() : value }));
+    if (field.name === 'pincode') { 
+      handlePincodeChange(value); 
+      return; 
+    }
+    
+    setFormData(prev => ({ 
+      ...prev, 
+      [field.name]: field.name === 'pan' ? value.toUpperCase() : value 
+    }));
+    
     const error = validateField(field, value);
     setErrors(prev => ({ ...prev, [field.name]: error }));
   };
@@ -71,6 +92,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
     const currentStepData = formSchema.steps.find(s => s.step === currentStep);
     
     const stepErrors = {};
@@ -79,20 +101,36 @@ function App() {
       if (error) stepErrors[field.name] = error;
     });
 
-    if (Object.keys(stepErrors).length > 0) { setErrors(stepErrors); setLoading(false); return; }
+    if (Object.keys(stepErrors).length > 0) { 
+      setErrors(stepErrors); 
+      setLoading(false); 
+      return; 
+    }
 
     try {
       let response;
       if (currentStep === 1) {
-        response = await axios.post(`${API_BASE_URL}/validate-step1`, { aadhaar: formData.aadhaar, otp: formData.otp });
+        response = await axios.post(`${API_BASE_URL}/validate-step1`, { 
+          aadhaar: formData.aadhaar, 
+          otp: formData.otp 
+        });
       } else if (currentStep === 2) {
-        response = await axios.post(`${API_BASE_URL}/validate-step2`, { pan: formData.pan, pincode: formData.pincode, city: formData.city, state: formData.state, submissionId: 1 });
+        response = await axios.post(`${API_BASE_URL}/validate-step2`, { 
+          pan: formData.pan, 
+          pincode: formData.pincode, 
+          city: formData.city, 
+          state: formData.state, 
+          submissionId: Date.now() 
+        });
       }
 
       if (response.data.success) {
         setCompletedSteps(prev => [...prev, currentStep]);
-        if (currentStep < 2) setCurrentStep(currentStep + 1); 
-        else setIsCompleted(true);
+        if (currentStep < 2) {
+          setCurrentStep(currentStep + 1); 
+        } else {
+          setIsCompleted(true);
+        }
         setErrors({});
       }
     } catch (error) {
@@ -103,7 +141,13 @@ function App() {
     }
   };
 
-  const resetForm = () => { setCurrentStep(1); setFormData({}); setErrors({}); setCompletedSteps([]); setIsCompleted(false); };
+  const resetForm = () => { 
+    setCurrentStep(1); 
+    setFormData({}); 
+    setErrors({}); 
+    setCompletedSteps([]); 
+    setIsCompleted(false); 
+  };
 
   if (isCompleted) {
     return (
@@ -204,6 +248,12 @@ function App() {
             <div className="form-content">
               <h3 className="form-section-title">{currentStepData.title}</h3>
               
+              {errors.general && (
+                <div className="error-message general-error">
+                  ⚠️ {errors.general}
+                </div>
+              )}
+              
               <form onSubmit={handleSubmit}>
                 <div className="form-row">
                   {currentStepData.fields.map(field => (
@@ -229,7 +279,7 @@ function App() {
                 <div className="form-actions">
                   {currentStep > 1 ? <button type="button" onClick={() => setCurrentStep(currentStep - 1)} className="btn btn-secondary" disabled={loading}>← Previous</button> : <div></div>}
                   <button type="submit" disabled={loading} className="btn btn-primary">
-                    {loading ? <><div className="spinner"></div>Processing...</> : (currentStep === 2 ? 'Validate & Generate OTP →' : 'Next Step →')}
+                    {loading ? <><div className="spinner"></div>Processing...</> : (currentStep === 2 ? 'Submit Registration →' : 'Next Step →')}
                   </button>
                 </div>
               </form>
