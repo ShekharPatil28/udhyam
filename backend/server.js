@@ -17,7 +17,8 @@ app.get('/', (req, res) => {
   res.send({
     activeStatus: true,
     error: false,
-  });
+  })
+});
 
 // Validation rules
 const validations = {
@@ -186,3 +187,4 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
