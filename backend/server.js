@@ -11,10 +11,18 @@ app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://udyam-registration-portal.vercel.app/'] // Your Vercel URL
     : ['http://localhost:3000'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));  
 app.use(express.json());
 
+app.options('*', cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://udyam-registration-portal.vercel.app']
+    : ['http://localhost:3000'],
+  credentials: true
+}));
 // Add these routes to your existing server.js file:
 
 // Form schema route
