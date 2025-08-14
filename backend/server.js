@@ -5,40 +5,13 @@ const { body, validationResult } = require('express-validator');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Vercel-specific CORS middleware (FIRST - handles all CORS issues)
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://udhyam-35mv.vercel.app');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
-  
-  if (req.method === 'OPTIONS') {
-    console.log('Preflight OPTIONS handled for:', req.path);
-    return res.sendStatus(200);
-  }
-  
-  next();
-});
+// Simple CORS for local development
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
-// Backup CORS configuration
-const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://udhyam-35mv.vercel.app'] // Your actual frontend URL
-    : ['http://localhost:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With']
-};
-
-app.use(cors(corsOptions));
 app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send({
-    activeStatus: true,
-    error: false,
-  })
-});
 
 // Validation rules
 const validations = {
@@ -113,8 +86,6 @@ app.get('/api/form-schema', (req, res) => {
 app.post('/api/validate-step1', 
   [validations.aadhaar, validations.otp],
   (req, res) => {
-    console.log('Step 1 validation request received:', req.body);
-    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
@@ -122,27 +93,32 @@ app.post('/api/validate-step1',
 
     const { aadhaar, otp } = req.body;
     
-    if (aadhaar === '123456789012' && otp === '123456') {
+    // ✅ Accept any valid 12-digit Aadhaar with demo OTP
+    if (/^[0-9]{12}$/.test(aadhaar) && otp === '123456') {
       res.json({
         success: true,
         message: 'Step 1 validated successfully',
         submissionId: Date.now()
       });
+    } else if (!/^[0-9]{12}$/.test(aadhaar)) {
+      res.status(400).json({
+        success: false,
+        message: 'Please enter a valid 12-digit Aadhaar number'
+      });
     } else {
       res.status(400).json({
         success: false,
-        message: 'Invalid Aadhaar or OTP. Use: Aadhaar=123456789012, OTP=123456'
+        message: 'Invalid OTP. Use: 123456'
       });
     }
   }
 );
 
+
 // Step 2 validation
 app.post('/api/validate-step2',
   [validations.pan],
   (req, res) => {
-    console.log('Step 2 validation request received:', req.body);
-    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
@@ -205,10 +181,9 @@ app.post('/api/submit-form', (req, res) => {
   });
 });
 
-// Start server with 0.0.0.0 binding for Vercel
-app.listen(PORT, '0.0.0.0', () => {
+// Start server
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log('CORS enabled for Vercel deployment');
 });
 
 module.exports = app;

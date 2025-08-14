@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css';
 
 // Simple local API URL
-const API_BASE_URL = 'https://udhyam-snowy.vercel.app/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 const formSchema = {
   steps: [
@@ -203,10 +203,10 @@ function App() {
 
       <nav className="nav-bar">
         <ul className="nav-links">
-          <li><a  className="active">Home</a></li>
-          <li><a >NIC Code</a></li>
-          <li><a >Print / Verify</a></li>
-          <li><a >Login</a></li>
+          <li><a href="#" className="active">Home</a></li>
+          <li><a href="#">NIC Code</a></li>
+          <li><a href="#">Print / Verify</a></li>
+          <li><a href="#">Login</a></li>
         </ul>
       </nav>
 
