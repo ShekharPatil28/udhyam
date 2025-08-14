@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css';
 
 // Simple local API URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://udhyam-snowy.vercel.app/api';
 
 const formSchema = {
   steps: [
