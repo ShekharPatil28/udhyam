@@ -6,10 +6,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Simple CORS for local development
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://udhyam-35mv.vercel.app/'] // Your actual frontend URL
+    : ['http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
 
 app.use(express.json());
 
